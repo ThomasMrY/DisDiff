@@ -1,0 +1,102 @@
+model:
+  base_learning_rate: 2.0e-6   # set to target_lr by starting main.py with '--scale_lr False'
+  target: ldm.models.diffusion.ddpm.LatentDiffusion
+  params:
+    linear_start: 0.0015
+    linear_end: 0.0155
+    num_timesteps_cond: 1
+    log_every_t: 200
+    timesteps: 1000
+    loss_type: l1
+    first_stage_key: "image"
+    cond_stage_key: "image"
+    image_size: 16
+    channels: 4
+    cond_stage_trainable: true
+    concat_mode: False
+    scale_by_std: True
+    conditioning_key: adm
+    monitor: 'train/epoch_num'
+    dis_loss_flag: True
+
+    scheduler_config: # 10000 warmup steps
+      target: ldm.lr_scheduler.LambdaLinearScheduler
+      params:
+        warm_up_steps: [10000]
+        cycle_lengths: [10000000000000]
+        f_start: [1.e-6]
+        f_max: [1.]
+        f_min: [ 1.]
+
+    unet_config:
+      target: ldm.modules.diffusionmodules.openaimodel_shift.UNetModel
+      params:
+        image_size: 16
+        in_channels: 4
+        out_channels: 4
+        model_channels: 64
+        attention_resolutions: [ 1, 2, 4]   # 16, 8, 4
+        num_res_blocks: 2
+        channel_mult: [ 1,2,4,4 ]  # 8,4,2,1
+        num_heads: 8
+        repre_emb_channels: 32
+        use_scale_shift_norm: true
+        resblock_updown: true
+        seprate_decoder: true
+        orth_emb: true
+        ckpt_path: "ldm_logs/2022-12-29T15-56-18_mpi3d-kl-4-16/checkpoints/epoch=000029.ckpt"
+        load_ema_ckpt: true
+        latent_unit: 6
+
+
+    first_stage_config:
+      target: ldm.models.autoencoder.AutoencoderKL
+      params:
+        embed_dim: 4
+        monitor: "val/rec_loss"
+        ckpt_path: "ae_logs/2022-12-28T17-57-39_mpi3d_kl_4_16/checkpoints/epoch=000019.ckpt"
+        ddconfig:
+          double_z: true
+          z_channels: 4
+          resolution: 64
+          in_channels: 3
+          out_ch: 3
+          ch: 32
+          ch_mult: [ 1,2,4]  # num_down = len(ch_mult)-1 64, 32, 16, 8
+          num_res_blocks: 2
+          attn_resolutions: [ ]
+          dropout: 0.0
+        lossconfig:
+          target: torch.nn.Identity
+
+    cond_stage_config:
+      target: ldm.modules.encoders.modules.Encoder4
+      params:
+        d: 128
+        latent_dim: 192
+data:
+  target: main.DataModuleFromConfig
+  params:
+    batch_size: 128
+    wrap: True
+    num_workers: 8
+    train:
+      target: ldm.data.dis.MPI3DTrain
+    test:
+      target: ldm.data.dis.MPI3DTrain
+
+lightning:
+  callbacks:
+    image_logger:
+      target: main.ImageLogger
+      params:
+        batch_frequency: 10000
+        max_images: 16
+        increase_log_steps: false
+        log_images_kwargs:
+          inpaint: false
+          plot_diffusion_rows: false
+          plot_progressive_rows: false
+          plot_swapped_concepts: true
+  trainer:
+    benchmark: True

@@ -1,0 +1,36 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Train Enc",
+            "args": ["--base", "configs/autoencoder/shapes3d_vq_4_16.yaml", "-t", "--gpus", "0,"],
+            "type": "python",
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Train LDM",
+            // "args": ["--base", "configs/latent-diffusion/shapes3d-vq-4-16.yaml", "-t", "--gpus", "0,"],
+            "args": ["--base", "configs/latent-diffusion/shapes3d-vq-4-16-dis.yaml","-t", "--gpus", "0,","-dt","Z" ,"-dw", "0.05", "-l","exp_vq_shapes3d", "-n","10_Z_0.05_s0","-s","0"],
+            "type": "python",
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Eval loop",
+            "args": ["-l","exp_vq_shapes3d","-p","1"],
+            "type": "python",
+            "request": "launch",
+            "program": "run_para_metrics.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+    ]
+}
