@@ -44,7 +44,7 @@ model:
         resblock_updown: true
         seprate_decoder: true
         orth_emb: true
-        ckpt_path: logs/2022-12-15T07-18-56_shapes3d-kl-4-16/checkpoints/epoch=000091.ckpt
+        ckpt_path: "/my/checkpoint/path"
         load_ema_ckpt: true
         latent_unit: 6
 
@@ -54,7 +54,7 @@ model:
       params:
         embed_dim: 4
         monitor: "val/rec_loss"
-        ckpt_path: "logs/2022-12-12T01-28-40_shapes3d_kl_4_16/checkpoints/epoch=000041.ckpt"
+        ckpt_path: "/my/checkpoint/path"
         ddconfig:
           double_z: true
           z_channels: 4

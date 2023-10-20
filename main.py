@@ -402,13 +402,13 @@ class ImageLogger(Callback):
             return True
         return False
 
-    # def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
-    def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
+    def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
+    # def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
         if not self.disabled and (pl_module.global_step > 0 or self.log_first_step):
             self.log_img(pl_module, batch, batch_idx, split="train")
 
-    # def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
-    def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
+    def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
+    # def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
         if not self.disabled and pl_module.global_step > 0:
             self.log_img(pl_module, batch, batch_idx, split="val")
         if hasattr(pl_module, 'calibrate_grad_norm'):
@@ -420,13 +420,13 @@ class CUDACallback(Callback):
     # see https://github.com/SeanNaren/minGPT/blob/master/mingpt/callback.py
     def on_train_epoch_start(self, trainer, pl_module):
         # Reset the memory use counter
-        torch.cuda.reset_peak_memory_stats(trainer.strategy.root_device.index)
-        torch.cuda.synchronize(trainer.strategy.root_device.index)
+        torch.cuda.reset_peak_memory_stats(trainer.root_gpu)
+        torch.cuda.synchronize(trainer.root_gpu)
         self.start_time = time.time()
 
     def on_train_epoch_end(self, trainer, pl_module):
-        torch.cuda.synchronize(trainer.strategy.root_device.index)
-        max_memory = torch.cuda.max_memory_allocated(trainer.strategy.root_device.index) / 2 ** 20
+        torch.cuda.synchronize(trainer.root_gpu)
+        max_memory = torch.cuda.max_memory_allocated(trainer.root_gpu) / 2 ** 20
         epoch_time = time.time() - self.start_time
 
         try:
@@ -458,12 +458,6 @@ if __name__ == "__main__":
             "If you want to resume training in a new log folder, "
             "use -n/--name in combination with --resume_from_checkpoint"
         )
-    with open(".gitignore", "r") as f:
-        lines = f.readlines()
-        if opt.logdir + "\n" not in lines:
-            lines = [opt.logdir + "\n"] + lines
-    with open(".gitignore", "w") as f:
-        f.writelines(lines)
     if opt.resume:
         if not os.path.exists(opt.resume):
             raise ValueError("Cannot find {}".format(opt.resume))
@@ -508,8 +502,8 @@ if __name__ == "__main__":
     # merge trainer cli with config
     trainer_config = lightning_config.get("trainer", OmegaConf.create())
     # default to ddp
-    # trainer_config["accelerator"] = "ddp"
-    trainer_config["accelerator"] = "cuda"
+    trainer_config["accelerator"] = "ddp"
+    # trainer_config["accelerator"] = "cuda"
     for k in nondefault_trainer_args(opt):
         trainer_config[k] = getattr(opt, k)
     if not "gpus" in trainer_config:

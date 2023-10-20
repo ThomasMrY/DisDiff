@@ -44,7 +44,7 @@ model:
         resblock_updown: true
         seprate_decoder: true
         orth_emb: true
-        ckpt_path: "ldm_logs/2022-12-29T15-58-16_celeba-kl-4-16/checkpoints/epoch=000160.ckpt"
+        ckpt_path: "/my/checkpoint/path"
         load_ema_ckpt: true
         latent_unit: 6
 
@@ -54,7 +54,7 @@ model:
       params:
         embed_dim: 4
         monitor: "val/rec_loss"
-        ckpt_path: "ae_logs/2022-12-28T18-10-22_celeba_kl_4_16/checkpoints/epoch=000091.ckpt"
+        ckpt_path: "/my/checkpoint/path"
         ddconfig:
           double_z: true
           z_channels: 4

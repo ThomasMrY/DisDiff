@@ -472,7 +472,7 @@ class Horse_lmdb(Dataset):
         
 class Shapes3DTrain(Shapes3D):
     def __init__(self, **kwargs):
-        super().__init__(path='/path/to/your/datasets/',
+        super().__init__(path='../../../guided-diffusion/datasets/',
                 original_resolution=None,
                 **kwargs)
 

@@ -44,7 +44,7 @@ model:
         resblock_updown: true
         seprate_decoder: true
         orth_emb: true
-        ckpt_path: ldm_logs/2023-01-08T08-35-01_celeba-vq-4-16/checkpoints/last.ckpt
+        ckpt_path: "/my/checkpoint/path"
         load_ema_ckpt: true
         latent_unit: 6
 
@@ -55,7 +55,7 @@ model:
         embed_dim: 3
         n_embed: 2048
         monitor: "val/rec_loss"
-        ckpt_path: "ae_logs/2023-01-07T07-31-32_celeba_vq_4_16/checkpoints/last.ckpt"
+        ckpt_path: "/my/checkpoint/path"
         ddconfig:
           double_z: false
           z_channels: 3
@@ -78,6 +78,8 @@ model:
       params:
         d: 128
         latent_dim: 192
+    dis_loss_type: Z
+    dis_weight: 0.05
 data:
   target: main.DataModuleFromConfig
   params:

@@ -110,10 +110,14 @@ where {exp-name} is the experiment name of this setting. We give an name example
 ```sh
 python run_para_metrics.py -l exp_vq_shapes3d -p 10
 ```
+# Pretrained Models
+Pretrained Autoencoder [Download](https://1drv.ms/u/s!AhWdKGJb0BiJ-D-nkFIwon_Vxemb?e=Dj9Dxh)
 
+Pretrained LDM [Download](https://1drv.ms/u/s!AhWdKGJb0BiJ-EA_niNNENGVtWfL?e=N2Dtez)
+
+Pretrained DisDiff [Download](https://1drv.ms/u/s!AhWdKGJb0BiJ-EGD3rQoDheYbJVF?e=ayWE1x)
 
 # Acknowlegement
-
 Note that this project is built upon [LDM](https://github.com/CompVis/latent-diffusion) and [PDAE](https://github.com/ckczzj/PDAE). The eveluation code is built upon [disentanglement_lib](https://github.com/google-research/disentanglement_lib).
 
 # Citation
